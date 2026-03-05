@@ -8,7 +8,7 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-change-in-prod")
     UPLOAD_FOLDER = BASE_DIR / "uploads"
     OUTPUT_FOLDER = BASE_DIR / "outputs"
-    MAX_CONTENT_LENGTH = 220 * 1024 * 1024  # 220MB (docx 20 + images 200)
+    MAX_CONTENT_LENGTH = 230 * 1024 * 1024  # 230MB (docx 30 + images 200)
     ALLOWED_DOCX = {".docx"}
     ALLOWED_IMAGES = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".gif"}
 

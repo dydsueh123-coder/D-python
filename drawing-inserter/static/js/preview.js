@@ -107,8 +107,11 @@ function getCurrentOrder() {
 
 document.getElementById("btn-insert").addEventListener("click", async () => {
     const order = getCurrentOrder();
+    const imagesPerPage = parseInt(
+        document.querySelector('input[name="images_per_page"]:checked').value
+    );
     document.getElementById("section-preview").classList.add("d-none");
     document.getElementById("section-result").classList.remove("d-none");
 
-    window.startInsert(appState.jobId, order);
+    window.startInsert(appState.jobId, order, imagesPerPage);
 });

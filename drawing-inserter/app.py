@@ -92,6 +92,9 @@ def api_insert(job_id):
     """삽입 작업을 백그라운드로 실행하고 즉시 응답. 진행률은 SSE로 확인."""
     body = request.json or {}
     ordered_filenames = body.get("order")
+    images_per_page = int(body.get("images_per_page", 1))
+    if images_per_page not in (1, 2):
+        images_per_page = 1
 
     job_dir = Config.UPLOAD_FOLDER / job_id
     if not job_dir.exists():
@@ -115,7 +118,7 @@ def api_insert(job_id):
             def on_progress(current, total):
                 q.put({"type": "progress", "current": current, "total": total})
 
-            config = InsertConfig()
+            config = InsertConfig(images_per_page=images_per_page)
             result = insert_drawings(docx_path, image_paths, output_path, config, on_progress)
 
             # 검증 리포트 생성 후 done 메시지에 포함
@@ -165,4 +168,4 @@ def request_entity_too_large(e):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5100)
+    app.run(host='0.0.0.0', port=5100, debug=False)

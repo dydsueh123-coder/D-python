@@ -13,10 +13,12 @@ import shutil
 @dataclass
 class InsertConfig:
     max_width_cm: float = 14.5
-    max_height_cm: float = 22.0
+    max_height_cm: float = 22.0       # 1페이지 1장 기준 최대 높이
+    max_height_2up_cm: float = 10.0   # 1페이지 2장 기준 장당 최대 높이
     caption_font: str = "맑은 고딕"
     caption_size_pt: int = 12
     caption_template: str = "【도 {key}】"
+    images_per_page: int = 1          # 1 또는 2
 
 
 def _get_image_dimensions(img_path: Path, config: InsertConfig) -> tuple[float, float]:
@@ -40,6 +42,64 @@ def _get_image_dimensions(img_path: Path, config: InsertConfig) -> tuple[float, 
         h_cm *= ratio
 
     return w_cm, h_cm
+
+
+def _add_page_break(doc):
+    """문서에 페이지 나누기 단락 추가"""
+    para = doc.add_paragraph()
+    run = para.add_run()
+    br = OxmlElement("w:br")
+    br.set(qn("w:type"), "page")
+    run._r.append(br)
+
+
+def _add_caption(doc, text: str, config: InsertConfig):
+    """캡션 단락 추가 (왼쪽 정렬)"""
+    para = doc.add_paragraph()
+    para.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    run = para.add_run(text)
+    run.font.name = config.caption_font
+    run.font.size = Pt(config.caption_size_pt)
+
+
+def _add_image(doc, img_path: Path, config: InsertConfig, max_height_cm: float):
+    """이미지 단락 추가 (왼쪽 정렬, 지정 높이 기준 축소)"""
+    with Image.open(img_path) as img:
+        orig_w, orig_h = img.size
+    dpi = 96
+    w_cm = orig_w / dpi * 2.54
+    h_cm = orig_h / dpi * 2.54
+
+    if w_cm > config.max_width_cm:
+        ratio = config.max_width_cm / w_cm
+        w_cm, h_cm = w_cm * ratio, h_cm * ratio
+    if h_cm > max_height_cm:
+        ratio = max_height_cm / h_cm
+        w_cm, h_cm = w_cm * ratio, h_cm * ratio
+
+    para = doc.add_paragraph()
+    para.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    para.add_run().add_picture(str(img_path), width=Cm(w_cm))
+
+
+def _insert_1up(doc, img_path: Path, caption_text: str, config: InsertConfig):
+    """1페이지 1장 모드: 페이지 나누기 → 캡션 → 이미지"""
+    _add_page_break(doc)
+    _add_caption(doc, caption_text, config)
+    _add_image(doc, img_path, config, config.max_height_cm)
+
+
+def _insert_2up(doc, img_path: Path, caption_text: str, config: InsertConfig,
+                idx: int, sorted_drawings: list, path_map: dict):
+    """
+    1페이지 2장 모드.
+    짝수 인덱스(0, 2, 4...): 페이지 나누기 후 첫 번째 도면 삽입
+    홀수 인덱스(1, 3, 5...): 페이지 나누기 없이 두 번째 도면 이어서 삽입
+    """
+    if idx % 2 == 0:
+        _add_page_break(doc)
+    _add_caption(doc, caption_text, config)
+    _add_image(doc, img_path, config, config.max_height_2up_cm)
 
 
 def insert_drawings(
@@ -69,26 +129,10 @@ def insert_drawings(
         key = drawing["key"]
         caption_text = config.caption_template.format(key=key)
 
-        # 페이지 나누기 (각 도면을 새 페이지에 배치)
-        page_break_para = doc.add_paragraph()
-        page_break_run = page_break_para.add_run()
-        br = OxmlElement("w:br")
-        br.set(qn("w:type"), "page")
-        page_break_run._r.append(br)
-
-        # 캡션 삽입 (왼쪽 정렬)
-        caption_para = doc.add_paragraph()
-        caption_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        run = caption_para.add_run(caption_text)
-        run.font.name = config.caption_font
-        run.font.size = Pt(config.caption_size_pt)
-
-        # 이미지 삽입 (왼쪽 정렬)
-        w_cm, _ = _get_image_dimensions(img_path, config)
-        img_para = doc.add_paragraph()
-        img_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
-        img_run = img_para.add_run()
-        img_run.add_picture(str(img_path), width=Cm(w_cm))
+        if config.images_per_page == 2:
+            _insert_2up(doc, img_path, caption_text, config, i, sorted_drawings, path_map)
+        else:
+            _insert_1up(doc, img_path, caption_text, config)
 
         inserted += 1
         if progress_callback:

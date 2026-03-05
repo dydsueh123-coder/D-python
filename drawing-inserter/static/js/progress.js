@@ -1,4 +1,4 @@
-window.startInsert = async function(jobId, order) {
+window.startInsert = async function(jobId, order, imagesPerPage = 1) {
     const progressLabel = document.getElementById("progress-label");
     const progressBar = document.getElementById("progress-bar");
     const resultProgress = document.getElementById("result-progress");
@@ -16,7 +16,7 @@ window.startInsert = async function(jobId, order) {
     const res = await fetch(`/api/insert/${jobId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ order }),
+        body: JSON.stringify({ order, images_per_page: imagesPerPage }),
     });
 
     if (!res.ok) {
