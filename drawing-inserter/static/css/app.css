@@ -1,0 +1,65 @@
+/* 드롭존 */
+.drop-zone {
+    border: 2px dashed #adb5bd;
+    border-radius: 8px;
+    padding: 2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.drop-zone:hover {
+    border-color: #0d6efd;
+    background-color: #f0f5ff;
+}
+
+.drop-zone--active {
+    border-color: #0d6efd;
+    background-color: #e8f0fe;
+}
+
+.drop-zone__icon {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+/* 썸네일 카드 */
+.thumbnail-img-wrap {
+    height: 120px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+}
+
+.thumbnail-img {
+    max-height: 120px;
+    object-fit: contain;
+}
+
+.thumbnail-card {
+    cursor: grab;
+    transition: box-shadow 0.15s;
+}
+
+.thumbnail-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+/* Sortable 드래그 상태 */
+.sortable-ghost {
+    opacity: 0.35;
+    background: #cfe2ff;
+}
+
+.sortable-drag {
+    cursor: grabbing !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}

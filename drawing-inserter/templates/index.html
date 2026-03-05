@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h4 class="mb-4 fw-semibold">도면 자동 삽입</h4>
+
+<!-- Step 1: 파일 업로드 -->
+<div class="card mb-3" id="section-upload">
+    <div class="card-header fw-medium">1단계 — 파일 선택</div>
+    <div class="card-body">
+        <div class="row g-3">
+            <!-- 워드 문서 드롭존 -->
+            <div class="col-md-5">
+                <div class="drop-zone" id="dropzone-docx" data-type="docx">
+                    <div class="drop-zone__icon">📄</div>
+                    <div class="drop-zone__text">워드 문서를 여기에 끌어다 놓거나<br>클릭해서 선택하세요</div>
+                    <div class="drop-zone__sub text-muted small">.docx 파일</div>
+                    <div class="drop-zone__filename d-none"></div>
+                </div>
+                <input type="file" id="input-docx" accept=".docx" class="d-none">
+            </div>
+
+            <div class="col-md-1 d-flex align-items-center justify-content-center text-muted">+</div>
+
+            <!-- 이미지 드롭존 -->
+            <div class="col-md-6">
+                <div class="drop-zone" id="dropzone-images" data-type="images">
+                    <div class="drop-zone__icon">🖼️</div>
+                    <div class="drop-zone__text">도면 이미지를 여기에 끌어다 놓거나<br>클릭해서 선택하세요</div>
+                    <div class="drop-zone__sub text-muted small">.png .jpg 등 여러 파일 선택 가능</div>
+                    <div class="drop-zone__filename d-none"></div>
+                </div>
+                <input type="file" id="input-images" accept=".png,.jpg,.jpeg,.bmp,.tiff,.gif"
+                       multiple class="d-none">
+            </div>
+        </div>
+
+        <div class="mt-3 text-end">
+            <button class="btn btn-primary" id="btn-parse" disabled>
+                파싱 확인 →
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Step 2: 파싱 결과 미리보기 -->
+<div class="card mb-3 d-none" id="section-preview">
+    <div class="card-header fw-medium d-flex justify-content-between align-items-center">
+        <span>2단계 — 순서 확인</span>
+        <span class="badge bg-secondary" id="badge-count">0장</span>
+    </div>
+    <div class="card-body">
+        <!-- 경고 배너 -->
+        <div class="alert alert-warning d-none" id="alert-warnings" role="alert"></div>
+        <div class="alert alert-danger d-none" id="alert-errors" role="alert"></div>
+
+        <!-- 썸네일 그리드 (Sortable 적용 대상) -->
+        <div class="row row-cols-2 row-cols-md-4 g-2" id="thumbnail-grid">
+            <!-- JS로 동적 생성 -->
+        </div>
+
+        <!-- 파싱 실패 목록 -->
+        <div class="mt-3 d-none" id="section-failures">
+            <p class="text-muted small mb-1">아래 파일은 도면 번호를 인식하지 못해 제외됩니다:</p>
+            <ul class="list-unstyled small text-muted" id="list-failures"></ul>
+        </div>
+
+        <div class="mt-3 text-end">
+            <button class="btn btn-outline-secondary me-2" id="btn-reset">다시 선택</button>
+            <button class="btn btn-success" id="btn-insert">삽입 실행</button>
+        </div>
+    </div>
+</div>
+
+<!-- Step 3: 진행률 + 결과 -->
+<div class="card d-none" id="section-result">
+    <div class="card-header fw-medium">3단계 — 삽입 결과</div>
+    <div class="card-body">
+        <!-- 진행 중 -->
+        <div id="result-progress">
+            <p class="mb-2 text-muted small" id="progress-label">준비 중...</p>
+            <div class="progress" style="height: 20px;">
+                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                     id="progress-bar" role="progressbar"
+                     style="width: 0%">0%</div>
+            </div>
+        </div>
+
+        <!-- 완료 -->
+        <div class="d-none" id="result-done">
+            <div class="alert alert-success mb-3" id="result-summary"></div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" id="btn-download">결과 파일 다운로드</button>
+                <button class="btn btn-outline-secondary" id="btn-new">새 작업 시작</button>
+            </div>
+        </div>
+
+        <!-- 오류 -->
+        <div class="d-none" id="result-error">
+            <div class="alert alert-danger" id="result-error-message"></div>
+            <button class="btn btn-outline-danger" id="btn-retry">다시 시도</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/upload.js') }}"></script>
+<script src="{{ url_for('static', filename='js/preview.js') }}"></script>
+<script src="{{ url_for('static', filename='js/progress.js') }}"></script>
+{% endblock %}
