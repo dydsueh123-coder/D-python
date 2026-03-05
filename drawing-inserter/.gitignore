@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+uploads/
+outputs/
+tests/test_images_100/
