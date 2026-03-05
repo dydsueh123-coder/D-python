@@ -67,7 +67,22 @@ def api_upload():
             continue
         img_path = job_dir / img_file.filename
         img_file.save(img_path)
+
+        # 손상된 이미지 사전 검증
+        try:
+            from PIL import Image as PILImage
+            with PILImage.open(img_path) as im:
+                im.verify()
+        except Exception:
+            img_path.unlink(missing_ok=True)
+            continue  # 손상 이미지는 조용히 제외 (실패 목록은 파싱 단계에서 노출)
+
         image_paths.append(img_file.filename)
+
+    if not image_paths:
+        import shutil
+        shutil.rmtree(job_dir, ignore_errors=True)
+        return jsonify({"error": "유효한 이미지 파일이 없습니다"}), 400
 
     return jsonify({"job_id": job_id, "image_count": len(image_paths), "images": image_paths})
 
