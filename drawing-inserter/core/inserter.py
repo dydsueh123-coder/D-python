@@ -3,6 +3,8 @@ from pathlib import Path
 from docx import Document
 from docx.shared import Cm, Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
 from PIL import Image
 from core.parser import sort_drawings_with_failures
 import shutil
@@ -14,7 +16,7 @@ class InsertConfig:
     max_height_cm: float = 22.0
     caption_font: str = "맑은 고딕"
     caption_size_pt: int = 12
-    caption_template: str = "<도면{key}>"
+    caption_template: str = "【도 {key}】"
 
 
 def _get_image_dimensions(img_path: Path, config: InsertConfig) -> tuple[float, float]:
@@ -67,17 +69,24 @@ def insert_drawings(
         key = drawing["key"]
         caption_text = config.caption_template.format(key=key)
 
-        # 캡션 삽입
+        # 페이지 나누기 (각 도면을 새 페이지에 배치)
+        page_break_para = doc.add_paragraph()
+        page_break_run = page_break_para.add_run()
+        br = OxmlElement("w:br")
+        br.set(qn("w:type"), "page")
+        page_break_run._r.append(br)
+
+        # 캡션 삽입 (왼쪽 정렬)
         caption_para = doc.add_paragraph()
-        caption_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        caption_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
         run = caption_para.add_run(caption_text)
         run.font.name = config.caption_font
         run.font.size = Pt(config.caption_size_pt)
 
-        # 이미지 삽입
+        # 이미지 삽입 (왼쪽 정렬)
         w_cm, _ = _get_image_dimensions(img_path, config)
         img_para = doc.add_paragraph()
-        img_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        img_para.alignment = WD_ALIGN_PARAGRAPH.LEFT
         img_run = img_para.add_run()
         img_run.add_picture(str(img_path), width=Cm(w_cm))
 

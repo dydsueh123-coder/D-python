@@ -57,4 +57,4 @@ def test_캡션_텍스트_삽입_확인(tmp_path):
 
     doc = Document(output_path)
     texts = [p.text for p in doc.paragraphs]
-    assert "<도면1>" in texts
+    assert "【도 1】" in texts
