@@ -100,4 +100,5 @@ def insert_drawings(
         "inserted": inserted,
         "failures": failures,
         "total_input": len(image_paths),
+        "drawings": sorted_drawings,  # 삽입된 도면 상세 목록 (key, filename)
     }

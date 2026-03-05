@@ -43,11 +43,52 @@ window.startInsert = async function(jobId, order) {
             progressBar.textContent = "100%";
 
             const r = msg.result;
+            const report = msg.report;
+
+            // 요약 배너
             const failNote = r.failures && r.failures.length > 0
-                ? `<br><small>파싱 실패로 제외된 파일: ${r.failures.length}건</small>`
-                : "";
+                ? ` / 제외 ${r.failures.length}건` : "";
             document.getElementById("result-summary").innerHTML =
-                `✅ 삽입 완료 — ${r.inserted}장 정상 삽입 (입력: ${r.total_input}장)${failNote}`;
+                `삽입 완료 &mdash; 총 입력 <strong>${r.total_input}장</strong> &nbsp;|&nbsp; `
+                + `성공 <strong>${r.inserted}장</strong>${failNote}`;
+
+            // 삽입 성공 테이블
+            const successBody = document.getElementById("report-success-body");
+            successBody.innerHTML = "";
+            (r.drawings || []).forEach((d, idx) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td class="text-center text-muted">${idx + 1}</td>
+                    <td class="fw-medium">【도 ${d.key}】</td>
+                    <td class="text-truncate" style="max-width:300px" title="${d.filename}">${d.filename}</td>
+                    <td class="text-center"><span class="badge bg-success">삽입됨</span></td>
+                `;
+                successBody.appendChild(tr);
+            });
+
+            // 파싱 실패 테이블
+            if (r.failures && r.failures.length > 0) {
+                const failBody = document.getElementById("report-failures-body");
+                failBody.innerHTML = "";
+                r.failures.forEach((fname, idx) => {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+                        <td class="text-center text-muted">${idx + 1}</td>
+                        <td class="text-truncate" style="max-width:360px" title="${fname}">${fname}</td>
+                        <td class="text-warning fw-medium">도면번호 인식 실패</td>
+                    `;
+                    failBody.appendChild(tr);
+                });
+                document.getElementById("report-failures-wrap").classList.remove("d-none");
+            }
+
+            // 갭/중복 경고
+            if (report && (report.warnings.length > 0 || report.errors.length > 0)) {
+                const items = [...(report.errors || []), ...(report.warnings || [])];
+                document.getElementById("report-warnings-content").innerHTML =
+                    items.map(w => `⚠️ ${w.detail}`).join("<br>");
+                document.getElementById("report-warnings-wrap").classList.remove("d-none");
+            }
 
             resultProgress.classList.add("d-none");
             resultDone.classList.remove("d-none");

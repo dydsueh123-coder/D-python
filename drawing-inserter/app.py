@@ -117,7 +117,10 @@ def api_insert(job_id):
 
             config = InsertConfig()
             result = insert_drawings(docx_path, image_paths, output_path, config, on_progress)
-            q.put({"type": "done", "result": result})
+
+            # 검증 리포트 생성 후 done 메시지에 포함
+            report = build_report(result["drawings"], result["failures"])
+            q.put({"type": "done", "result": result, "report": report})
         except Exception as e:
             q.put({"type": "error", "message": str(e)})
         finally:
