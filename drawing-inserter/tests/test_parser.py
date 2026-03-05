@@ -18,6 +18,10 @@ def test_파싱_실패():
     assert parse_drawing_number("readme.txt") is None
 
 
+def test_tif_확장자_인식():
+    assert parse_drawing_number("drawing(5).tif") == ("5", 5, "")
+
+
 def test_정렬_순서():
     files = ["xyz(10).jpg", "abcd(1).png", "mnop(3a).png", "ijkl(3).png"]
     result = sort_drawings(files)

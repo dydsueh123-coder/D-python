@@ -10,7 +10,7 @@ class Config:
     OUTPUT_FOLDER = BASE_DIR / "outputs"
     MAX_CONTENT_LENGTH = 220 * 1024 * 1024  # 220MB (docx 20 + images 200)
     ALLOWED_DOCX = {".docx"}
-    ALLOWED_IMAGES = {".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".gif"}
+    ALLOWED_IMAGES = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".gif"}
 
     @classmethod
     def ensure_dirs(cls):

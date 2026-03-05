@@ -1,7 +1,7 @@
 import re
 from pathlib import Path
 
-SUPPORTED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".gif"}
+SUPPORTED_EXTENSIONS = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".gif"}
 
 # 기본 패턴: 파일명(번호).확장자
 # 번호는 숫자 + 선택적 알파벳 (예: 1, 3a, 10b)

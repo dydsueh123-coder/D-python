@@ -64,7 +64,7 @@ initDropZone(
     document.getElementById("dropzone-images"),
     document.getElementById("input-images"),
     (files) => {
-        const allowed = new Set([".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".gif"]);
+        const allowed = new Set([".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".gif"]);
         const images = files.filter(f => {
             const ext = f.name.slice(f.name.lastIndexOf(".")).toLowerCase();
             return allowed.has(ext);
