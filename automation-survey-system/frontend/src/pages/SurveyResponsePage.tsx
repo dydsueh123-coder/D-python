@@ -6,6 +6,7 @@ import {
 import { CheckCircleOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { surveysApi } from '../api/surveys'
 import QuestionRenderer from '../components/survey/QuestionRenderer'
+import ScreenRecorder from '../components/survey/ScreenRecorder'
 import type { SurveyDetail, SurveyResponse, AnswerInput } from '../types/survey'
 
 const { Title, Paragraph, Text } = Typography
@@ -27,6 +28,7 @@ function SurveyResponsePage() {
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [submittedResponseId, setSubmittedResponseId] = useState<number | undefined>()
   const [error, setError] = useState<string | null>(null)
 
   const surveyId = Number(id)
@@ -63,6 +65,7 @@ function SurveyResponsePage() {
     try {
       const res = await surveysApi.submitResponse(surveyId, answers)
       setMyResponse(res.data)
+      setSubmittedResponseId(res.data.id)
       setSubmitted(true)
     } catch (e: unknown) {
       const msg = (e as { response?: { data?: { error?: string } } })
@@ -92,16 +95,24 @@ function SurveyResponsePage() {
   // 이미 응답했거나 방금 제출 완료
   if (myResponse || submitted) {
     return (
-      <Result
-        icon={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
-        title="응답이 완료되었습니다"
-        subTitle={`"${survey.title}" 설문에 응답해 주셔서 감사합니다.`}
-        extra={
-          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/surveys')}>
-            설문 목록으로
-          </Button>
-        }
-      />
+      <div style={{ maxWidth: 720, margin: '0 auto' }}>
+        <Result
+          icon={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
+          title="응답이 완료되었습니다"
+          subTitle={`"${survey.title}" 설문에 응답해 주셔서 감사합니다.`}
+          extra={
+            <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/surveys')}>
+              설문 목록으로
+            </Button>
+          }
+        />
+        {/* 제출 완료 후 화면 녹화 제출 기회 제공 */}
+        {submitted && (
+          <div style={{ marginTop: 8 }}>
+            <ScreenRecorder surveyResponseId={submittedResponseId} />
+          </div>
+        )}
+      </div>
     )
   }
 
@@ -160,6 +171,9 @@ function SurveyResponsePage() {
             </Text>
           )}
         </Space>
+
+        {/* 설문 응답 전 화면 녹화 (선택사항) */}
+        <ScreenRecorder />
 
         <Divider />
 
