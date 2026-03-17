@@ -20,7 +20,11 @@ def create_app(config_name='development'):
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
-    cors.init_app(app, origins=['http://localhost:5173'])  # Vite dev server
+    cors.init_app(app, origins=[
+        'http://localhost:5173',
+        'https://localhost:5173',
+        'https://172.16.2.101:5173',
+    ])
 
     # Flask-Login 설정
     login_manager.login_view = 'auth.login'

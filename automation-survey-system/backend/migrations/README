@@ -1,7 +1,1 @@
-Flask-Migrate (Alembic) 마이그레이션
-
-사용법:
-  flask db init       # 최초 초기화 (이미 완료)
-  flask db migrate -m "메시지"  # 마이그레이션 생성
-  flask db upgrade    # DB에 적용
-  flask db downgrade  # 롤백
+Single-database configuration for Flask.

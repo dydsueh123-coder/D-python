@@ -138,7 +138,7 @@ function AdminDashboardPage() {
     <div>
       <Space style={{ marginBottom: 20 }}>
         <Title level={4} style={{ margin: 0 }}>관리자 대시보드</Title>
-        <Button icon={<PlusOutlined />} type="primary" onClick={() => navigate('/admin/surveys/new')}>
+        <Button icon={<PlusOutlined />} type="primary" onClick={() => navigate('/admin/surveys/new/edit')}>
           새 설문 만들기
         </Button>
         <Button onClick={() => navigate('/admin/users')}>사용자 관리</Button>
