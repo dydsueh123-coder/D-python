@@ -3,6 +3,7 @@ import AppLayout from './components/common/AppLayout'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import SurveyListPage from './pages/SurveyListPage'
+import SurveyResponsePage from './pages/SurveyResponsePage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         >
           <Route index element={<Navigate to="/surveys" replace />} />
           <Route path="surveys" element={<SurveyListPage />} />
+          <Route path="surveys/:id/respond" element={<SurveyResponsePage />} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
