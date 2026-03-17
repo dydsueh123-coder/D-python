@@ -7,6 +7,7 @@ import SurveyResponsePage from './pages/SurveyResponsePage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
 import SurveyAnalyticsPage from './pages/SurveyAnalyticsPage'
 import AdminUsersPage from './pages/AdminUsersPage'
+import AdminSurveyBuilderPage from './pages/AdminSurveyBuilderPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -27,30 +28,11 @@ function App() {
           <Route path="surveys/:id/respond" element={<SurveyResponsePage />} />
 
           {/* 관리자 전용 라우트 */}
-          <Route
-            path="admin"
-            element={
-              <ProtectedRoute requireAdmin>
-                <AdminDashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="admin/surveys/:id/analytics"
-            element={
-              <ProtectedRoute requireAdmin>
-                <SurveyAnalyticsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="admin/users"
-            element={
-              <ProtectedRoute requireAdmin>
-                <AdminUsersPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="admin" element={<ProtectedRoute requireAdmin><AdminDashboardPage /></ProtectedRoute>} />
+          <Route path="admin/surveys/new" element={<ProtectedRoute requireAdmin><AdminSurveyBuilderPage /></ProtectedRoute>} />
+          <Route path="admin/surveys/:id/edit" element={<ProtectedRoute requireAdmin><AdminSurveyBuilderPage /></ProtectedRoute>} />
+          <Route path="admin/surveys/:id/analytics" element={<ProtectedRoute requireAdmin><SurveyAnalyticsPage /></ProtectedRoute>} />
+          <Route path="admin/users" element={<ProtectedRoute requireAdmin><AdminUsersPage /></ProtectedRoute>} />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

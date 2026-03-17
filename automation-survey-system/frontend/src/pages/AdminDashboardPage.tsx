@@ -6,7 +6,7 @@ import {
 } from 'antd'
 import {
   FileTextOutlined, CheckCircleOutlined, TeamOutlined,
-  MessageOutlined, TrophyOutlined, BarChartOutlined
+  MessageOutlined, TrophyOutlined, BarChartOutlined, EditOutlined, PlusOutlined
 } from '@ant-design/icons'
 import type { ColumnsType } from 'antd/es/table'
 import { analyticsApi } from '../api/analytics'
@@ -112,15 +112,24 @@ function AdminDashboardPage() {
     {
       title: '',
       key: 'action',
-      width: 80,
+      width: 160,
       render: (_: unknown, record: PriorityItem) => (
-        <Button
-          size="small"
-          icon={<BarChartOutlined />}
-          onClick={() => navigate(`/admin/surveys/${record.survey_id}/analytics`)}
-        >
-          상세
-        </Button>
+        <Space>
+          <Button
+            size="small"
+            icon={<BarChartOutlined />}
+            onClick={() => navigate(`/admin/surveys/${record.survey_id}/analytics`)}
+          >
+            통계
+          </Button>
+          <Button
+            size="small"
+            icon={<EditOutlined />}
+            onClick={() => navigate(`/admin/surveys/${record.survey_id}/edit`)}
+          >
+            편집
+          </Button>
+        </Space>
       ),
     },
   ]
@@ -129,6 +138,9 @@ function AdminDashboardPage() {
     <div>
       <Space style={{ marginBottom: 20 }}>
         <Title level={4} style={{ margin: 0 }}>관리자 대시보드</Title>
+        <Button icon={<PlusOutlined />} type="primary" onClick={() => navigate('/admin/surveys/new')}>
+          새 설문 만들기
+        </Button>
         <Button onClick={() => navigate('/admin/users')}>사용자 관리</Button>
       </Space>
 
