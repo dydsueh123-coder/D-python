@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from flask import Flask
 from .config import config_by_name
 from .extensions import db, migrate, login_manager, cors
@@ -20,6 +21,13 @@ def create_app(config_name='development'):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     cors.init_app(app, origins=['http://localhost:5173'])  # Vite dev server
+
+    # Flask-Login 설정
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = '로그인이 필요합니다.'
+
+    # 세션 수명 설정 (8시간)
+    app.permanent_session_lifetime = timedelta(hours=8)
 
     # 모델 임포트 (Alembic 자동 감지용)
     from .auth import models as auth_models  # noqa

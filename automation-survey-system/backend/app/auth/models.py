@@ -20,3 +20,11 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.username}>'
+
+
+from app.extensions import login_manager  # noqa: E402 (순환 참조 방지용 지연 임포트)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
