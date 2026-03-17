@@ -4,6 +4,9 @@ import ProtectedRoute from './components/common/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import SurveyListPage from './pages/SurveyListPage'
 import SurveyResponsePage from './pages/SurveyResponsePage'
+import AdminDashboardPage from './pages/AdminDashboardPage'
+import SurveyAnalyticsPage from './pages/SurveyAnalyticsPage'
+import AdminUsersPage from './pages/AdminUsersPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -22,6 +25,32 @@ function App() {
           <Route index element={<Navigate to="/surveys" replace />} />
           <Route path="surveys" element={<SurveyListPage />} />
           <Route path="surveys/:id/respond" element={<SurveyResponsePage />} />
+
+          {/* 관리자 전용 라우트 */}
+          <Route
+            path="admin"
+            element={
+              <ProtectedRoute requireAdmin>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/surveys/:id/analytics"
+            element={
+              <ProtectedRoute requireAdmin>
+                <SurveyAnalyticsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="admin/users"
+            element={
+              <ProtectedRoute requireAdmin>
+                <AdminUsersPage />
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

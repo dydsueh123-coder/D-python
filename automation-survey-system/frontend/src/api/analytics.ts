@@ -1,10 +1,13 @@
 import apiClient from './client'
-import type { DashboardStats, AutomationScore } from '../types/analytics'
+import type { DashboardStats, PriorityItem, SurveyAnalytics } from '../types/analytics'
 
 export const analyticsApi = {
   getDashboardStats: () =>
-    apiClient.get<DashboardStats>('/analytics/stats'),
+    apiClient.get<DashboardStats>('/analytics/dashboard'),
 
-  getAutomationScores: () =>
-    apiClient.get<AutomationScore[]>('/analytics/scores'),
+  getPriorityRanking: () =>
+    apiClient.get<PriorityItem[]>('/analytics/priority'),
+
+  getSurveyAnalytics: (surveyId: number) =>
+    apiClient.get<SurveyAnalytics>(`/analytics/surveys/${surveyId}`),
 }
